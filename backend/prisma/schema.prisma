@@ -1,0 +1,148 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlserver"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           Int      @id @default(autoincrement())
+  email        String   @unique
+  passwordHash String
+  name         String
+  role         String   @default("STAFF")
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Customer {
+  id          Int      @id @default(autoincrement())
+  fullName    String
+  phone       String
+  email       String?
+  citizenId   String?
+  address     String?
+  notes       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  weddings    WeddingEvent[]
+  contracts   Contract[]
+}
+
+model Couple {
+  id            Int      @id @default(autoincrement())
+  brideName     String
+  groomName     String
+  birthDate     DateTime?
+  profession    String?
+  photoUrl      String?
+  facebook      String?
+  notes         String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model Venue {
+  id          Int      @id @default(autoincrement())
+  name        String
+  capacity    Int
+  price       Float
+  status      String   @default("AVAILABLE")
+  imageUrl    String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  weddings    WeddingEvent[]
+}
+
+model TableSetting {
+  id          Int      @id @default(autoincrement())
+  tableNumber Int
+  capacity    Int
+  price       Float
+  status      String   @default("AVAILABLE")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Menu {
+  id              Int      @id @default(autoincrement())
+  appetizer       String?
+  mainCourse      String?
+  dessert         String?
+  beverage        String?
+  imageUrl        String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  weddingEvents   WeddingEvent[]
+}
+
+model Service {
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String?
+  price       Float?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  weddingEvents WeddingEvent[]
+}
+
+model WeddingEvent {
+  id              Int      @id @default(autoincrement())
+  eventDate       DateTime
+  eventTime       String
+  venueId         Int
+  customerId      Int
+  menuId          Int?
+  serviceId       Int?
+  status          String   @default("PENDING")
+  totalAmount     Float
+  depositAmount   Float?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  venue           Venue    @relation(fields: [venueId], references: [id])
+  customer        Customer @relation(fields: [customerId], references: [id])
+  menu            Menu?    @relation(fields: [menuId], references: [id])
+  service         Service? @relation(fields: [serviceId], references: [id])
+  guests          Guest[]
+  payments        Payment[]
+}
+
+model Contract {
+  id              Int      @id @default(autoincrement())
+  customerId      Int
+  totalValue      Float
+  depositAmount   Float
+  status          String   @default("PENDING")
+  pdfUrl          String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  customer        Customer @relation(fields: [customerId], references: [id])
+}
+
+model Payment {
+  id              Int      @id @default(autoincrement())
+  eventId         Int
+  amount          Float
+  type            String
+  status          String   @default("PENDING")
+  transactionDate DateTime @default(now())
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  weddingEvent    WeddingEvent @relation(fields: [eventId], references: [id])
+}
+
+model Guest {
+  id           Int      @id @default(autoincrement())
+  name         String
+  phone        String?
+  email        String?
+  tableNumber  Int?
+  status       String   @default("PENDING")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  weddingEventId Int?
+  weddingEvent WeddingEvent? @relation(fields: [weddingEventId], references: [id])
+}
