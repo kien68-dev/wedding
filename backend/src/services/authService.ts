@@ -10,7 +10,7 @@ const defaultAdminRole = process.env.DEFAULT_ADMIN_ROLE ?? 'ADMIN';
 
 export class AuthService {
   private createTokens(user: { id: number; email: string; name: string; role: string }) {
-    const accessToken = jwt.sign({ id: user.id, email: user.email, role: user.role }, process.env.JWT_SECRET ?? 'secret', { expiresIn: '1h' });
+    const accessToken = jwt.sign({ id: user.id, email: user.email, role: user.role }, process.env.JWT_SECRET ?? 'secret', { expiresIn: '8h' });
     const refreshToken = jwt.sign({ id: user.id }, process.env.JWT_REFRESH_SECRET ?? 'refresh-secret', { expiresIn: '7d' });
 
     return { accessToken, refreshToken };
