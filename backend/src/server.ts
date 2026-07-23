@@ -32,6 +32,7 @@ app.use(
     origin: [
       "http://localhost:5173",
       "https://wedding-1-nh0c.onrender.com",
+      "https://hangup-anaerobic-ravioli.ngrok-free.dev"
     ],
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
